@@ -2,7 +2,8 @@
   description = "Handy - offline speech-to-text for Linux and macOS";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    # Match the consuming fleet pin so native CI tests the same toolchain.
+    nixpkgs.url = "github:NixOS/nixpkgs/55bfb4d7437bd4e09ab7cba58a43bd68eb310044";
     bun2nix = {
       url = "github:nix-community/bun2nix/2.0.8";
       inputs.nixpkgs.follows = "nixpkgs";

@@ -481,3 +481,40 @@ Handy is open-source software, but the Handy name, logo, icon, and brand assets 
 - **Silero** for great lightweight VAD
 - **Tauri** team for the excellent Rust-based app framework
 - **Community contributors** helping make Handy better
+
+## Nix flake (this fork)
+
+The fork builds Handy 0.9.8 for `x86_64-linux`, `aarch64-linux` and
+`aarch64-darwin`. Intel macOS is not supported by the current nixpkgs pin.
+Linux and Apple Silicon packages are built on native GitHub Actions runners.
+
+```sh
+nix build .#handy
+nix develop
+```
+
+On macOS the output includes `Applications/Handy.app` and `bin/handy`.
+The Nix build uses Metal for local transcription. Apple Intelligence is disabled
+because its FoundationModels compiler macros require full Xcode; the Nix build
+uses Handy's supported Swift stub. Self-update is disabled for immutable Nix
+installs, including when launched from Finder. Update the flake pin instead.
+
+Add the fork as a flake input, following your system's nixpkgs input:
+
+```nix
+inputs.handy = {
+  url = "github:dweee/Handy";
+  inputs.nixpkgs.follows = "nixpkgs";
+};
+```
+
+For nix-darwin, import `handy.darwinModules.default` and set
+`programs.handy.enable = true`. This installs the app and starts it hidden in
+Aqua login sessions; set `programs.handy.autostart = false` to opt out.
+For NixOS, import `handy.nixosModules.default` and enable `programs.handy`.
+The separate `handy.homeManagerModules.default` provides `services.handy.enable`
+with systemd on Linux and launchd on macOS. Choose either the nix-darwin
+LaunchAgent or the Home Manager service, so Handy starts only once.
+
+macOS microphone and Accessibility permissions must be granted interactively.
+The package does not change privacy permissions or activate a system generation.

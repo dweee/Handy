@@ -1,6 +1,6 @@
 # Home-manager module for Handy speech-to-text
 #
-# Provides a systemd user service for autostart.
+# Provides a systemd user service or a macOS LaunchAgent for autostart.
 # Usage: imports = [ handy.homeManagerModules.default ];
 #        services.handy.enable = true;
 {
@@ -24,7 +24,7 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    systemd.user.services.handy = {
+    systemd.user.services.handy = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
       Unit = {
         Description = "Handy speech-to-text";
         After = [ "graphical-session.target" ];
@@ -36,6 +36,17 @@ in
         RestartSec = 5;
       };
       Install.WantedBy = [ "graphical-session.target" ];
+    };
+    launchd.agents.handy = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
+      enable = true;
+      config = {
+        ProgramArguments = [
+          "${cfg.package}/bin/handy"
+          "--start-hidden"
+        ];
+        RunAtLoad = true;
+        LimitLoadToSessionType = "Aqua";
+      };
     };
   };
 }

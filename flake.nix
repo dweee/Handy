@@ -81,7 +81,16 @@
               pkgs.cargo
               pkgs.rust-analyzer
             ];
-            env = package.devEnv;
+            env =
+              package.devEnv
+              // pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
+                # Unpatched development sources still dlopen these by soname.
+                LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [
+                  pkgs.libayatana-appindicator
+                  pkgs.vulkan-loader
+                ];
+                XDG_DATA_DIRS = "${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}:${pkgs.gtk3}/share/gsettings-schemas/${pkgs.gtk3.name}:${pkgs.hicolor-icon-theme}/share";
+              };
             shellHook = ''
               echo "Run 'bun install' then 'bun run tauri dev' to start Handy."
             '';

@@ -53,8 +53,14 @@
         inherit (self.packages.${system}) handy;
       });
 
-      nixosModules.default = withPackage ./nix/module.nix;
-      darwinModules.default = withPackage ./nix/darwin-module.nix;
+      nixosModules = rec {
+        handy = withPackage ./nix/module.nix;
+        default = handy;
+      };
+      darwinModules = rec {
+        handy = withPackage ./nix/darwin-module.nix;
+        default = handy;
+      };
 
       homeManagerModules.default = { lib, pkgs, ... }: {
         imports = [ ./nix/hm-module.nix ];

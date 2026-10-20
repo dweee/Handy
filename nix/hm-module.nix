@@ -24,6 +24,7 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    home.packages = [ cfg.package ];
     systemd.user.services.handy = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
       Unit = {
         Description = "Handy speech-to-text";

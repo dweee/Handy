@@ -62,7 +62,7 @@ jobs:
           test -x result/Applications/Handy.app/Contents/MacOS/handy
           test -L result/bin/handy
           /usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' result/Applications/Handy.app/Contents/Info.plist
-          result/bin/handy --help
-      - name: Verify Linux CLI
-        if: runner.os == 'Linux'
-        run: result/bin/handy --help
+      - name: Verify CLI enters the Rust application
+        run: |
+          result/bin/handy --help | tee handy-help.txt
+          grep -F -- '--toggle-transcription' handy-help.txt

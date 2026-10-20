@@ -11,6 +11,7 @@
   jq,
   nodejs,
   swift,
+  cctools,
   apple-sdk_26,
   webkitgtk_4_1,
   gtk3,
@@ -98,6 +99,7 @@ rustPlatform.buildRustPackage {
     spirv-headers
   ]
   ++ lib.optionals isDarwin [
+    cctools
     swift
     apple-sdk_26
   ];

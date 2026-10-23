@@ -1,11 +1,5 @@
 {
-  "aarch64-darwin": [
-    "handy"
-  ],
-  "aarch64-linux": [
-    "handy"
-  ],
-  "x86_64-linux": [
-    "handy"
-  ]
+  "aarch64-darwin": ["handy"],
+  "aarch64-linux": ["handy"],
+  "x86_64-linux": ["handy"]
 }

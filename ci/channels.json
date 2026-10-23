@@ -1,20 +1,20 @@
 {
   "targets": {
-    "x86_64-linux": [
+    "aarch64-darwin": [
       {
-        "attribute": "packages.x86_64-linux.default",
+        "attribute": "packages.aarch64-darwin.handy",
         "visibility": "public"
       }
     ],
     "aarch64-linux": [
       {
-        "attribute": "packages.aarch64-linux.default",
+        "attribute": "packages.aarch64-linux.handy",
         "visibility": "public"
       }
     ],
-    "aarch64-darwin": [
+    "x86_64-linux": [
       {
-        "attribute": "packages.aarch64-darwin.default",
+        "attribute": "packages.x86_64-linux.handy",
         "visibility": "public"
       }
     ]

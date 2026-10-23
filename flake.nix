@@ -2,8 +2,9 @@
   description = "Handy - offline speech-to-text for Linux and macOS";
 
   inputs = {
-    # Match the consuming fleet pin so native CI tests the same toolchain.
-    nixpkgs.url = "github:NixOS/nixpkgs/55bfb4d7437bd4e09ab7cba58a43bd68eb310044";
+    # Pin the native toolchain used by package consumers.
+    nixpkgs.url =
+      "github:NixOS/nixpkgs/55bfb4d7437bd4e09ab7cba58a43bd68eb310044";
     bun2nix = {
       url = "github:nix-community/bun2nix/2.0.8";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -13,45 +14,44 @@
     };
   };
 
-  outputs =
-    {
-      self,
-      nixpkgs,
-      bun2nix,
-    }:
+  outputs = { self, nixpkgs, bun2nix, }:
     let
-      supportedSystems = [
-        "x86_64-linux"
-        "aarch64-linux"
-        "aarch64-darwin"
-      ];
+      supportedSystems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" ];
       forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
-      pkgsFor =
-        system:
+      pkgsFor = system:
         import nixpkgs {
           inherit system;
           overlays = [ bun2nix.overlays.default ];
         };
-      withPackage = module: { lib, pkgs, ... }: {
-        imports = [ module ];
-        programs.handy.package = lib.mkDefault self.packages.${pkgs.stdenv.hostPlatform.system}.handy;
-      };
-    in
-    {
-      packages = forAllSystems (
-        system:
-        let
-          pkgs = pkgsFor system;
-        in
-        rec {
-          handy = pkgs.callPackage ./nix/package.nix { src = self; };
+      withPackage = module:
+        { lib, pkgs, ... }: {
+          imports = [ module ];
+          programs.handy.package = lib.mkDefault
+            self.packages.${pkgs.stdenv.hostPlatform.system}.handy;
+        };
+    in {
+      packages = forAllSystems (system:
+        let pkgs = pkgsFor system;
+        in rec {
+          handy = pkgs.callPackage ./nix/package.nix {
+            src = pkgs.lib.cleanSourceWith {
+              src = self;
+              filter = path: _type:
+                !(builtins.elem (baseNameOf path) [
+                  ".github"
+                  "ci"
+                  ".fork-ci.json"
+                  "flake.nix"
+                  "flake.lock"
+                  "nix"
+                ]);
+            };
+          };
           default = handy;
-        }
-      );
+        });
 
-      checks = forAllSystems (system: {
-        inherit (self.packages.${system}) handy;
-      });
+      checks =
+        forAllSystems (system: { inherit (self.packages.${system}) handy; });
 
       nixosModules = rec {
         handy = withPackage ./nix/module.nix;
@@ -64,38 +64,32 @@
 
       homeManagerModules.default = { lib, pkgs, ... }: {
         imports = [ ./nix/hm-module.nix ];
-        services.handy.package = lib.mkDefault self.packages.${pkgs.stdenv.hostPlatform.system}.handy;
+        services.handy.package =
+          lib.mkDefault self.packages.${pkgs.stdenv.hostPlatform.system}.handy;
       };
 
-      devShells = forAllSystems (
-        system:
+      devShells = forAllSystems (system:
         let
           pkgs = pkgsFor system;
           package = self.packages.${system}.handy;
-        in
-        {
+        in {
           default = pkgs.mkShell {
             inputsFrom = [ package ];
-            packages = [
-              pkgs.rustc
-              pkgs.cargo
-              pkgs.rust-analyzer
-            ];
-            env =
-              package.devEnv
+            packages = [ pkgs.rustc pkgs.cargo pkgs.rust-analyzer ];
+            env = package.devEnv
               // pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
                 # Unpatched development sources still dlopen these by soname.
                 LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [
                   pkgs.libayatana-appindicator
                   pkgs.vulkan-loader
                 ];
-                XDG_DATA_DIRS = "${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}:${pkgs.gtk3}/share/gsettings-schemas/${pkgs.gtk3.name}:${pkgs.hicolor-icon-theme}/share";
+                XDG_DATA_DIRS =
+                  "${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}:${pkgs.gtk3}/share/gsettings-schemas/${pkgs.gtk3.name}:${pkgs.hicolor-icon-theme}/share";
               };
             shellHook = ''
               echo "Run 'bun install' then 'bun run tauri dev' to start Handy."
             '';
           };
-        }
-      );
+        });
     };
 }

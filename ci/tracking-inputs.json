@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "inputs": {
+    "bun2nix": {
+      "source": "github:nix-community/bun2nix/2.0.8"
+    },
+    "nixpkgs": {
+      "source": "github:NixOS/nixpkgs"
+    }
+  }
+}

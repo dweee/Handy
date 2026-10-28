@@ -4,9 +4,9 @@
   inputs = {
     # Pin the native toolchain used by package consumers.
     nixpkgs.url =
-      "github:NixOS/nixpkgs/55bfb4d7437bd4e09ab7cba58a43bd68eb310044";
+      "github:NixOS/nixpkgs/5f9880cb30e73e4f8090e9e69acba3b14c0bd5bd";
     bun2nix = {
-      url = "github:nix-community/bun2nix/2.0.8";
+      url = "github:nix-community/bun2nix/c843f477b15f51151f8c6bcc886954699440a6e1";
       inputs.nixpkgs.follows = "nixpkgs";
       # 2.0.8 evaluates every system's formatter, even for Linux consumers.
       # nixpkgs 26.11 no longer supports x86_64-darwin (bun2nix#98).

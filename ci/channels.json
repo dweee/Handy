@@ -28,6 +28,7 @@
   "branch": "nix/darwin",
   "remote": "https://github.com/dweee/Handy.git",
   "inputCheckWorkflows": [
+    "release-channels.yml",
     "darwin-actions.yml",
     "others-actions.yml"
   ]

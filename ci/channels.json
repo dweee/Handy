@@ -26,5 +26,9 @@
   "forge": "github",
   "repository": "dweee/Handy",
   "branch": "nix/darwin",
-  "remote": "https://github.com/dweee/Handy.git"
+  "remote": "https://github.com/dweee/Handy.git",
+  "inputCheckWorkflows": [
+    "darwin-actions.yml",
+    "others-actions.yml"
+  ]
 }

@@ -13,6 +13,10 @@ src-tauri/target
 src-tauri/gen
 
 # Generated files
+# These workflows are canonical output of dave-fork-ci/PyYAML.
+.github/workflows/pr-checks.yml
+.github/workflows/release-channels.yml
+.github/workflows/scheduled-updates.yml
 src/bindings.ts
 src-tauri/src/catalog/catalog.json
 

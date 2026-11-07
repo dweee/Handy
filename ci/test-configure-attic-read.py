@@ -143,14 +143,14 @@ class PrivateReadTests(unittest.TestCase):
             text = workflow.read_text()
             build = text.split("\n  publish:\n")[0]
             self.assertNotIn("ATTIC_PULL_TOKEN", build)
-            read = build.split("      - name: Configure authenticated private cache reads", 1)[1].split("      - name:", 1)[0]
+            read = build.split("    - name: Configure read-only Niks3 access with GitHub OIDC", 1)[1].split("    - name:", 1)[0]
             self.assertIn("github.event_name == 'push'", read)
             self.assertIn("github.event_name == 'workflow_dispatch'", read)
             self.assertIn("github.event.repository.default_branch", read)
             self.assertNotIn("pull_request", read)
             cleanup = build.index("--cleanup")
             self.assertLess(cleanup, build.index("ci/transfer-attic.py export"))
-            self.assertIn("if: ${{ always() }}", build[build.rindex("      - name:", 0, cleanup):cleanup])
+            self.assertIn("if: ${{ always() }}", build[build.rindex("    - name:", 0, cleanup):cleanup])
             self.assertIn('nix build "$target"', build)
 
     def test_netrc_is_private_and_token_does_not_enter_nix_config(self):

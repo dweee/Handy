@@ -23,6 +23,7 @@
   libxtst,
   gtk-layer-shell,
   openssl,
+  sqlite,
   vulkan-loader,
   vulkan-headers,
   shaderc,
@@ -105,6 +106,7 @@ rustPlatform.buildRustPackage {
   ];
   buildInputs = [
     openssl
+    sqlite
   ]
   ++ gstPlugins
   ++ lib.optionals isLinux [

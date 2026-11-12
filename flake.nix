@@ -75,7 +75,7 @@
         in {
           default = pkgs.mkShell {
             inputsFrom = [ package ];
-            packages = [ pkgs.rustc pkgs.cargo pkgs.rust-analyzer ];
+            packages = [ pkgs.rustc pkgs.cargo pkgs.rustfmt pkgs.rust-analyzer ];
             env = package.devEnv
               // pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
                 # Unpatched development sources still dlopen these by soname.

@@ -518,3 +518,17 @@ LaunchAgent or the Home Manager service, so Handy starts only once.
 
 macOS microphone and Accessibility permissions must be granted interactively.
 The package does not change privacy permissions or activate a system generation.
+
+### Guarded upstream source updates
+
+The scheduled upstream caller follows `cjpais/Handy:main` and preserves upstream
+ancestry together with this fork's Nix packaging, contribution policy and CI.
+It uses a pinned reviewed controller, native package builds on all three
+supported platforms, frontend lint/format/keyboard checks and authenticated
+cache publication. Conflicts and failed checks stop the candidate.
+
+Automatic source merging remains disabled. A successful candidate still needs
+exact-head independent review and the normal protected-branch merge before
+`tested` and `stable` can advance through the release workflow. The caller is
+live only after this policy lands on `nix/darwin` and the owner enables
+`FORK_CI_ENABLED` and `GUARDED_UPSTREAM_SYNC_ENABLED`.

@@ -1,0 +1,169 @@
+{
+  "version": 1,
+  "upstream": "cjpais/Handy",
+  "branch": "main",
+  "track": "branch",
+  "author": {
+    "name": "dave",
+    "email": "git@d.monke.fail"
+  },
+  "required_paths": [
+    "AGENTS.md",
+    "nix/package.nix",
+    "nix/module.nix",
+    "nix/darwin-module.nix",
+    "nix/hm-module.nix",
+    ".nix/bun.nix"
+  ],
+  "protected_paths": [
+    "AGENTS.md",
+    "ci/**",
+    "nix/**",
+    "flake.nix",
+    "flake.lock",
+    ".nix/**"
+  ],
+  "matrix": [
+    {
+      "system": "x86_64-linux",
+      "packages": ["handy"],
+      "checks": [],
+      "tests": [
+        [
+          "nix",
+          "develop",
+          "--no-update-lock-file",
+          "--no-write-lock-file",
+          "--command",
+          "bun",
+          "install",
+          "--frozen-lockfile"
+        ],
+        [
+          "nix",
+          "develop",
+          "--no-update-lock-file",
+          "--no-write-lock-file",
+          "--command",
+          "bun",
+          "run",
+          "lint"
+        ],
+        [
+          "nix",
+          "develop",
+          "--no-update-lock-file",
+          "--no-write-lock-file",
+          "--command",
+          "bun",
+          "run",
+          "format:check"
+        ],
+        [
+          "nix",
+          "develop",
+          "--no-update-lock-file",
+          "--no-write-lock-file",
+          "--command",
+          "bun",
+          "run",
+          "test:keyboard"
+        ]
+      ]
+    },
+    {
+      "system": "aarch64-linux",
+      "packages": ["handy"],
+      "checks": [],
+      "tests": [
+        [
+          "nix",
+          "develop",
+          "--no-update-lock-file",
+          "--no-write-lock-file",
+          "--command",
+          "bun",
+          "install",
+          "--frozen-lockfile"
+        ],
+        [
+          "nix",
+          "develop",
+          "--no-update-lock-file",
+          "--no-write-lock-file",
+          "--command",
+          "bun",
+          "run",
+          "lint"
+        ],
+        [
+          "nix",
+          "develop",
+          "--no-update-lock-file",
+          "--no-write-lock-file",
+          "--command",
+          "bun",
+          "run",
+          "format:check"
+        ],
+        [
+          "nix",
+          "develop",
+          "--no-update-lock-file",
+          "--no-write-lock-file",
+          "--command",
+          "bun",
+          "run",
+          "test:keyboard"
+        ]
+      ]
+    },
+    {
+      "system": "aarch64-darwin",
+      "packages": ["handy"],
+      "checks": [],
+      "tests": [
+        [
+          "nix",
+          "develop",
+          "--no-update-lock-file",
+          "--no-write-lock-file",
+          "--command",
+          "bun",
+          "install",
+          "--frozen-lockfile"
+        ],
+        [
+          "nix",
+          "develop",
+          "--no-update-lock-file",
+          "--no-write-lock-file",
+          "--command",
+          "bun",
+          "run",
+          "lint"
+        ],
+        [
+          "nix",
+          "develop",
+          "--no-update-lock-file",
+          "--no-write-lock-file",
+          "--command",
+          "bun",
+          "run",
+          "format:check"
+        ],
+        [
+          "nix",
+          "develop",
+          "--no-update-lock-file",
+          "--no-write-lock-file",
+          "--command",
+          "bun",
+          "run",
+          "test:keyboard"
+        ]
+      ]
+    }
+  ]
+}

@@ -523,7 +523,7 @@ Handy is open-source software, but the Handy name, logo, icon, and brand assets 
 
 ## Nix flake (this fork)
 
-The fork builds Handy 0.9.8 for `x86_64-linux`, `aarch64-linux` and
+The fork builds the Handy version declared in `src-tauri/Cargo.toml` for `x86_64-linux`, `aarch64-linux` and
 `aarch64-darwin`. Intel macOS is not supported by the current nixpkgs pin.
 Linux and Apple Silicon packages are built on native GitHub Actions runners.
 

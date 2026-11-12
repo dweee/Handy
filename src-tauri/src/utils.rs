@@ -22,6 +22,22 @@ pub fn redact_text(text: &str) -> &str {
     }
 }
 
+/// Main window's opening and minimum page size, in logical pixels.
+pub const MAIN_WINDOW_SIZE: (f64, f64) = (720.0, 600.0);
+
+/// Title bar height in logical pixels (macOS draws it inside the inner size).
+/// Call on the main thread.
+#[cfg(target_os = "macos")]
+pub fn measure_title_bar(window: &tauri::WebviewWindow) -> f64 {
+    let Ok(ptr) = window.ns_window() else {
+        return 0.0;
+    };
+    // SAFETY: `ns_window` is the live NSWindow behind `window`, and this runs
+    // on the main thread.
+    let ns_window = unsafe { &*(ptr as *const objc2_app_kit::NSWindow) };
+    (ns_window.frame().size.height - ns_window.contentLayoutRect().size.height).max(0.0)
+}
+
 #[cfg(any(test, all(target_os = "windows", target_arch = "x86_64")))]
 const IMAGE_FILE_MACHINE_ARM64: u16 = 0xaa64;
 
@@ -169,9 +185,51 @@ pub fn env_flag_enabled(name: &str) -> bool {
     }
 }
 
+/// The `GDK_BACKEND` value requested through `HANDY_GDK_BACKEND`, if any.
+/// Empty or whitespace-only values count as unset.
+#[cfg(target_os = "linux")]
+fn requested_gdk_backend(value: Option<&str>) -> Option<&str> {
+    value.map(str::trim).filter(|v| !v.is_empty())
+}
+
+/// Copy `HANDY_GDK_BACKEND` into `GDK_BACKEND` when it is set.
+///
+/// The AppImage's `apprun-hooks/linuxdeploy-plugin-gtk.sh` unconditionally
+/// runs `export GDK_BACKEND=x11` (a workaround for tauri-apps/tauri#8541) after
+/// the user's environment, so `GDK_BACKEND=wayland ./Handy.AppImage` never
+/// reaches Handy. The hook cannot overwrite a variable it does not know about,
+/// so `HANDY_GDK_BACKEND=wayland ./Handy.AppImage` is the opt-in to native
+/// Wayland (cjpais/Handy#1729, #2034). Must run before GTK initializes.
+#[cfg(target_os = "linux")]
+pub fn apply_handy_gdk_backend() {
+    let requested = std::env::var("HANDY_GDK_BACKEND").ok();
+    if let Some(backend) = requested_gdk_backend(requested.as_deref()) {
+        std::env::set_var("GDK_BACKEND", backend);
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn requested_gdk_backend_ignores_unset_and_blank() {
+        assert_eq!(requested_gdk_backend(None), None);
+        assert_eq!(requested_gdk_backend(Some("")), None);
+        assert_eq!(requested_gdk_backend(Some("  ")), None);
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn requested_gdk_backend_keeps_the_value() {
+        assert_eq!(requested_gdk_backend(Some("wayland")), Some("wayland"));
+        assert_eq!(requested_gdk_backend(Some(" x11 ")), Some("x11"));
+        assert_eq!(
+            requested_gdk_backend(Some("wayland,x11")),
+            Some("wayland,x11")
+        );
+    }
 
     #[test]
     fn arm64_native_machine_is_the_only_match() {

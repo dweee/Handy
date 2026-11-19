@@ -4,7 +4,7 @@
   inputs = {
     # Pin the native toolchain used by package consumers.
     nixpkgs.url =
-      "github:NixOS/nixpkgs/c883e8e7d30aedb0af0095b9c723efe8d31c7ae3";
+      "github:NixOS/nixpkgs/963b6e09d25008706e2059dd4f45e398a464de3e";
     bun2nix = {
       url = "github:nix-community/bun2nix/c843f477b15f51151f8c6bcc886954699440a6e1";
       inputs.nixpkgs.follows = "nixpkgs";

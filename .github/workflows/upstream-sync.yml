@@ -15,10 +15,10 @@ jobs:
       contents: write
       actions: write
       checks: read
-    uses: dweee/dave-fork-ci/.github/workflows/upstream-sync.yml@55decc6a6c9e95f37dee09ffaa6e673f216f6ed4
+    uses: dweee/dave-fork-ci/.github/workflows/upstream-sync.yml@6b52aa63a778f2d9732ab47e218344a62d11048b
     with:
       tool-repository: dweee/dave-fork-ci
-      tool-revision: 55decc6a6c9e95f37dee09ffaa6e673f216f6ed4
-      auto-merge: false
+      tool-revision: 6b52aa63a778f2d9732ab47e218344a62d11048b
+      auto-merge: ${{ vars.FORK_CI_AUTO_MERGE == 'true' && (vars.NIKS3_PUSH_ENABLED || vars.ATTIC_PUSH_ENABLED) == 'true' }}
       cache: true
       max-closure-mib: 8192

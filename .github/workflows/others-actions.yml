@@ -44,6 +44,21 @@ jobs:
             experimental-features = nix-command flakes parallel-eval
             eval-cores = 2
             accept-flake-config = false
+            extra-substituters = https://install.determinate.systems https://cache.lix.systems https://nix-community.cachix.org https://cache.nixos.org/ https://ai.cachix.org https://cache.numtide.com https://codex-desktop-linux.cachix.org https://nix-on-droid.cachix.org https://virby-nix-darwin.cachix.org https://cache.nixos-cuda.org https://cache.flox.dev
+            extra-trusted-public-keys = cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= hydra.nixos.org-1:CNHJZBh9K4tP3EKF6FkkgeVYsS3ohTl+oS0Qa8bezVs= cache.lix.systems:aBnZUw8zA7H35Cz2RyKFVs3H4PlGTLawyY5KRbvJR8o= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs= ai.cachix.org-1:N9dzRK+alWwoKXQlnn0H6aUx0lU/mspIoz8hMvGvbbc= niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g= codex-desktop-linux.cachix.org-1:nX/xy6AdK9hQE24A8ALGjkCKj2ObFmcnemiL5Cid4nk= nix-on-droid.cachix.org-1:56snoMJTXmDRC1Ei24CmKoUqvHJ9XCp+nidK7qkMQrU= lantian:WVGO7vsRMSEN+h7Lp7kv6SAmrkEXgUGbbXm7jMDjBuQ= virby-nix-darwin.cachix.org-1:z9GiEZeBU5bEeoDQjyfHPMGPBaIQJOOvYOOjGMKIlLo= cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M= flox-cache-public-1:7F4OyH7ZCnFhcze3fJdfyXYLQw/aV7GEed86nQ7IsOs= niks3.monke.fail-1:q13GqiZgAxx7SyoLZInXoJjviZMOdNpfG03xs0VUD2M=
+            connect-timeout = 20
+      - name: Verify effective common public caches
+        run: |
+          set -eu
+          actual=$(nix config show substituters)
+          printf "Effective substituters: %s\n" "$actual"
+          nix config show trusted-public-keys
+          for url in https://install.determinate.systems https://cache.lix.systems https://nix-community.cachix.org https://cache.nixos.org/ https://ai.cachix.org https://cache.numtide.com https://codex-desktop-linux.cachix.org https://nix-on-droid.cachix.org https://virby-nix-darwin.cachix.org https://cache.nixos-cuda.org https://cache.flox.dev; do
+            case " $actual " in
+              *" $url "*) ;;
+              *) echo "Missing canonical cache: $url" >&2; exit 1 ;;
+            esac
+          done
       - name: Verify Determinate client and daemon
         run: |
           nix --version | grep -F "Determinate Nix 3.24.1"
@@ -82,11 +97,23 @@ jobs:
             experimental-features = nix-command flakes parallel-eval
             eval-cores = 2
             accept-flake-config = false
-            substituters = https://cache.nixos.org/
-            extra-substituters =
-            extra-trusted-public-keys = niks3.monke.fail-1:q13GqiZgAxx7SyoLZInXoJjviZMOdNpfG03xs0VUD2M=
             max-jobs = 1
             cores = 3
+            extra-substituters = https://install.determinate.systems https://cache.lix.systems https://nix-community.cachix.org https://cache.nixos.org/ https://ai.cachix.org https://cache.numtide.com https://codex-desktop-linux.cachix.org https://nix-on-droid.cachix.org https://virby-nix-darwin.cachix.org https://cache.nixos-cuda.org https://cache.flox.dev
+            extra-trusted-public-keys = cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= hydra.nixos.org-1:CNHJZBh9K4tP3EKF6FkkgeVYsS3ohTl+oS0Qa8bezVs= cache.lix.systems:aBnZUw8zA7H35Cz2RyKFVs3H4PlGTLawyY5KRbvJR8o= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs= ai.cachix.org-1:N9dzRK+alWwoKXQlnn0H6aUx0lU/mspIoz8hMvGvbbc= niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g= codex-desktop-linux.cachix.org-1:nX/xy6AdK9hQE24A8ALGjkCKj2ObFmcnemiL5Cid4nk= nix-on-droid.cachix.org-1:56snoMJTXmDRC1Ei24CmKoUqvHJ9XCp+nidK7qkMQrU= lantian:WVGO7vsRMSEN+h7Lp7kv6SAmrkEXgUGbbXm7jMDjBuQ= virby-nix-darwin.cachix.org-1:z9GiEZeBU5bEeoDQjyfHPMGPBaIQJOOvYOOjGMKIlLo= cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M= flox-cache-public-1:7F4OyH7ZCnFhcze3fJdfyXYLQw/aV7GEed86nQ7IsOs= niks3.monke.fail-1:q13GqiZgAxx7SyoLZInXoJjviZMOdNpfG03xs0VUD2M=
+            connect-timeout = 20
+      - name: Verify effective common public caches
+        run: |
+          set -eu
+          actual=$(nix config show substituters)
+          printf "Effective substituters: %s\n" "$actual"
+          nix config show trusted-public-keys
+          for url in https://install.determinate.systems https://cache.lix.systems https://nix-community.cachix.org https://cache.nixos.org/ https://ai.cachix.org https://cache.numtide.com https://codex-desktop-linux.cachix.org https://nix-on-droid.cachix.org https://virby-nix-darwin.cachix.org https://cache.nixos-cuda.org https://cache.flox.dev; do
+            case " $actual " in
+              *" $url "*) ;;
+              *) echo "Missing canonical cache: $url" >&2; exit 1 ;;
+            esac
+          done
       - name: Verify Determinate client and daemon
         run: |
           nix --version | grep -F "Determinate Nix 3.24.1"
@@ -167,8 +194,21 @@ jobs:
             experimental-features = nix-command flakes parallel-eval
             eval-cores = 2
             accept-flake-config = false
-            substituters = https://cache.nixos.org/
-            extra-substituters =
+            extra-substituters = https://install.determinate.systems https://cache.lix.systems https://nix-community.cachix.org https://cache.nixos.org/ https://ai.cachix.org https://cache.numtide.com https://codex-desktop-linux.cachix.org https://nix-on-droid.cachix.org https://virby-nix-darwin.cachix.org https://cache.nixos-cuda.org https://cache.flox.dev
+            extra-trusted-public-keys = cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= hydra.nixos.org-1:CNHJZBh9K4tP3EKF6FkkgeVYsS3ohTl+oS0Qa8bezVs= cache.lix.systems:aBnZUw8zA7H35Cz2RyKFVs3H4PlGTLawyY5KRbvJR8o= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs= ai.cachix.org-1:N9dzRK+alWwoKXQlnn0H6aUx0lU/mspIoz8hMvGvbbc= niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g= codex-desktop-linux.cachix.org-1:nX/xy6AdK9hQE24A8ALGjkCKj2ObFmcnemiL5Cid4nk= nix-on-droid.cachix.org-1:56snoMJTXmDRC1Ei24CmKoUqvHJ9XCp+nidK7qkMQrU= lantian:WVGO7vsRMSEN+h7Lp7kv6SAmrkEXgUGbbXm7jMDjBuQ= virby-nix-darwin.cachix.org-1:z9GiEZeBU5bEeoDQjyfHPMGPBaIQJOOvYOOjGMKIlLo= cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M= flox-cache-public-1:7F4OyH7ZCnFhcze3fJdfyXYLQw/aV7GEed86nQ7IsOs= niks3.monke.fail-1:q13GqiZgAxx7SyoLZInXoJjviZMOdNpfG03xs0VUD2M=
+            connect-timeout = 20
+      - name: Verify effective common public caches
+        run: |
+          set -eu
+          actual=$(nix config show substituters)
+          printf "Effective substituters: %s\n" "$actual"
+          nix config show trusted-public-keys
+          for url in https://install.determinate.systems https://cache.lix.systems https://nix-community.cachix.org https://cache.nixos.org/ https://ai.cachix.org https://cache.numtide.com https://codex-desktop-linux.cachix.org https://nix-on-droid.cachix.org https://virby-nix-darwin.cachix.org https://cache.nixos-cuda.org https://cache.flox.dev; do
+            case " $actual " in
+              *" $url "*) ;;
+              *) echo "Missing canonical cache: $url" >&2; exit 1 ;;
+            esac
+          done
       - name: Verify Determinate client and daemon
         run: |
           nix --version | grep -F "Determinate Nix 3.24.1"
